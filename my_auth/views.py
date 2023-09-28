@@ -9,7 +9,7 @@ from rest_framework_simplejwt.state import token_backend
 
 import my_auth
 from .models import User
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, LoginSerializer
 from .utils import Util
 from django.conf import settings
 
@@ -56,3 +56,12 @@ class VerifyEmail(generics.GenericAPIView):
         except my_auth.models.User.DoesNotExist as identifier:
             return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class LoginAPIView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
