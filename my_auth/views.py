@@ -1,15 +1,16 @@
 from django.shortcuts import render
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
 import rest_framework_simplejwt
 from rest_framework_simplejwt.tokens import RefreshToken, UntypedToken
 from rest_framework_simplejwt.state import token_backend
 
 import my_auth
 from .models import User
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import RegisterSerializer
 from .utils import Util
 from django.conf import settings
 
@@ -57,11 +58,8 @@ class VerifyEmail(generics.GenericAPIView):
             return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginAPIView(generics.GenericAPIView):
-    serializer_class = LoginSerializer
+class AUserView(APIView):
+    permissions_classes = (permissions.IsAuthenticated,)
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request):
+        return Response({'Jesus': 'Cristie'}, status=status.HTTP_200_OK)
