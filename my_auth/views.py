@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.response import Response
+from rest_framework.views import APIView
 import rest_framework_simplejwt
 from rest_framework_simplejwt.tokens import RefreshToken, UntypedToken
 from rest_framework_simplejwt.state import token_backend
@@ -56,3 +57,9 @@ class VerifyEmail(generics.GenericAPIView):
         except my_auth.models.User.DoesNotExist as identifier:
             return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class AUserView(APIView):
+    permissions_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        return Response({'Jesus': 'Cristie'}, status=status.HTTP_200_OK)
